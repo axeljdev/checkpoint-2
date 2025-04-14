@@ -1,5 +1,6 @@
 import { Arg, Mutation, Resolver, Query } from "type-graphql";
 import { Country, CountryCreateInput } from "../entities/Country";
+import { validate } from "class-validator";
 
 @Resolver()
 export class CountriesResolver {
@@ -7,6 +8,12 @@ export class CountriesResolver {
   async createCountry(@Arg("data") data: CountryCreateInput): Promise<Country> {
     const newCountry = new Country();
     Object.assign(newCountry, data);
+
+    const errors = await validate(newCountry);
+    if (errors.length > 0) {
+      throw new Error(`Validation failed: ${JSON.stringify(errors)}`);
+    }
+
     await newCountry.save();
     return newCountry;
   }

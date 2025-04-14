@@ -10,6 +10,7 @@ async function initialize() {
 
   const schema = await buildSchema({
     resolvers: [CountriesResolver],
+    validate: true,
   });
 
   const server = new ApolloServer({ schema });
